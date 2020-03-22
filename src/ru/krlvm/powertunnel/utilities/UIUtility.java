@@ -21,7 +21,7 @@ public class UIUtility {
     /**
      * Retrieves corrected value a window width/height
      * Needed for properly UI behavior on non-Windows operating systems
-     *
+     * <p>
      * 1,06 - is experimentally discovered Pi for UI scaling
      * in non-Windows guest, such as Linux/macOS
      *
@@ -29,10 +29,10 @@ public class UIUtility {
      * @return corrected dimension
      */
     public static int correct(int value) {
-        if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             return value;
         }
-        return (int)(value*1.06);
+        return (int) (value * 1.06);
     }
 
     public static float getResidualScaleFactor() {
@@ -52,7 +52,7 @@ public class UIUtility {
         String style = "font-family:" + font.getFamily() + ";" +
                 "font-weight:" + (font.isBold() ? "bold" : "normal") + ";" +
                 "font-size:" + font.getSize() + "pt;";
-        if(additionalStyles != null) {
+        if (additionalStyles != null) {
             style += additionalStyles;
         }
 

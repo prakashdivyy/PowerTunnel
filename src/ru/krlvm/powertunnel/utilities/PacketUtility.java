@@ -28,7 +28,7 @@ public class PacketUtility {
     /**
      * Retrieves list of packet's ByteBuf chunks
      *
-     * @param buf - ByteBuf of packet
+     * @param buf       - ByteBuf of packet
      * @param chunkSize - size of chunk
      * @return - ByteBuf chunks
      */
@@ -54,7 +54,7 @@ public class PacketUtility {
     /**
      * Retrieves list (byte[]) of packet's ByteBuf chunks
      *
-     * @param buf - ByteBuf of packet
+     * @param buf       - ByteBuf of packet
      * @param chunkSize - size of chunk
      * @return - ByteBuf chunks (byte[])
      */
@@ -63,7 +63,7 @@ public class PacketUtility {
         buf.readBytes(bytes);
         int len = bytes.length;
         LinkedList<byte[]> byteChunks = new LinkedList<>();
-        if(PowerTunnel.FULL_CHUNKING) {
+        if (PowerTunnel.FULL_CHUNKING) {
             int i = 0;
             while (i < len) {
                 byteChunks.add(Arrays.copyOfRange(bytes, i, i += chunkSize));

@@ -19,7 +19,7 @@ public class TrayManager {
         PopupMenu popup = new PopupMenu();
 
         Map<TextAttribute, Object> attributes = new HashMap<>();
-        attributes.put(TextAttribute.SIZE, 12*SwingDPI.getScaleFactor());
+        attributes.put(TextAttribute.SIZE, 12 * SwingDPI.getScaleFactor());
         Font font = Font.getFont(attributes);
         attributes.put(TextAttribute.FAMILY, Font.DIALOG);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
@@ -140,7 +140,7 @@ public class TrayManager {
     }
 
     public void showNotification(String message) {
-        if(!isLoaded()) return;
+        if (!isLoaded()) return;
         trayIcon.displayMessage(PowerTunnel.NAME, message, TrayIcon.MessageType.INFO);
     }
 

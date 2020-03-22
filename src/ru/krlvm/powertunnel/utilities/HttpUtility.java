@@ -62,7 +62,7 @@ public class HttpUtility {
     /**
      * Retrieves response with HTML code
      *
-     * @param html - HTML code
+     * @param html    - HTML code
      * @param headers - response headers
      * @return HttpResponse with HTML code
      */

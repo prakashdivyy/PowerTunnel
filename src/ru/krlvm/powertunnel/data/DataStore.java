@@ -48,7 +48,7 @@ public class DataStore {
     /**
      * DataStore constructor
      *
-     * @param fileName - data store file name
+     * @param fileName    - data store file name
      * @param defaultLine - default line
      */
     public DataStore(String fileName, String defaultLine) {
@@ -65,7 +65,7 @@ public class DataStore {
     public List<String> load() throws IOException {
         loadedLines = new ArrayList<>();
         File file = getFile();
-        if(file.exists()) {
+        if (file.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -75,7 +75,7 @@ public class DataStore {
             return loadedLines;
         } else {
             create(file);
-            if(defaults != null) {
+            if (defaults != null) {
                 write(defaults);
             }
             loadedLines = defaults;
@@ -106,19 +106,19 @@ public class DataStore {
     /**
      * Creates data store
      *
-     * @param file - data store file
+     * @param file  - data store file
      * @param lines - data store contents
      * @throws IOException - write failure
      */
     public void write(File file, Collection<String> lines) throws IOException {
-        if(file.exists()) {
+        if (file.exists()) {
             file.delete();
         }
         int current = 0;
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         for (String line : lines) {
             writer.write(line);
-            if(++current != lines.size()) {
+            if (++current != lines.size()) {
                 writer.write("\r\n");
             }
         }

@@ -49,7 +49,7 @@ public class OptionsFrame extends ControlFrame {
         updatePanel.add(updateButton, BorderLayout.WEST);
         updatePanel.add(updateLabel, BorderLayout.EAST);
         updatePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        if(!UpdateNotifier.ENABLED) {
+        if (!UpdateNotifier.ENABLED) {
             updateLabel.setText("<html><b>Update checking is disabled</b></html>");
         }
 
@@ -196,7 +196,7 @@ public class OptionsFrame extends ControlFrame {
 
     @Override
     public void setVisible(boolean b) {
-        if(!isVisible() && b) {
+        if (!isVisible() && b) {
             adjustSettings();
         }
         super.setVisible(b);

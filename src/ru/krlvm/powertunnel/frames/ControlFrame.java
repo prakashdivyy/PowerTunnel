@@ -5,7 +5,6 @@ import ru.krlvm.powertunnel.utilities.UIUtility;
 import ru.krlvm.swingdpi.ScalableJFrame;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Base implementation of JFrame (SwingDPI/ScalableJFrame)

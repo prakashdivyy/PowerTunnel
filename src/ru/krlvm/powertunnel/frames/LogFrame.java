@@ -26,7 +26,7 @@ public class LogFrame extends ControlFrame {
 
         logArea = new JTextArea();
         logArea.setEditable(false);
-        logArea.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        logArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         logArea.setFont(logArea.getFont().deriveFont(14F));
         SwingDPI.scaleFont(logArea);
 
@@ -73,22 +73,22 @@ public class LogFrame extends ControlFrame {
         instance = this;
     }
 
+    public static void print(String s) {
+        if (instance == null) {
+            return;
+        }
+        instance.logArea.append(s);
+        instance.logArea.append("\r\n");
+        instance.logArea.setCaretPosition(instance.logArea.getDocument().getLength());
+    }
+
     private void resizeInput() {
-        addressInput.setSize(new Dimension(panel.getWidth()- addToBlockList.getWidth()- addToWhiteList.getWidth(), panel.getHeight()));
+        addressInput.setSize(new Dimension(panel.getWidth() - addToBlockList.getWidth() - addToWhiteList.getWidth(), panel.getHeight()));
     }
 
     private String readInput() {
         String text = addressInput.getText();
         addressInput.setText("");
         return text;
-    }
-
-    public static void print(String s) {
-        if(instance == null) {
-            return;
-        }
-        instance.logArea.append(s);
-        instance.logArea.append("\r\n");
-        instance.logArea.setCaretPosition(instance.logArea.getDocument().getLength());
     }
 }

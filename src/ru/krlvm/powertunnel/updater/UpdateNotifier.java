@@ -11,13 +11,12 @@ import java.io.IOException;
 
 public class UpdateNotifier {
 
-    public static boolean ENABLED = true;
-
     private static final String LOG_TAG = "[Updater] ";
     private static final String URL = "https://raw.githubusercontent.com/krlvm/PowerTunnel/master/version.txt";
+    public static boolean ENABLED = true;
 
     public static void checkAndNotify() {
-        if(!ENABLED) {
+        if (!ENABLED) {
             return;
         }
         new Thread(new Runnable() {
@@ -51,7 +50,7 @@ public class UpdateNotifier {
                                 @Override
                                 public void run() {
                                     PowerTunnel.optionsFrame.updateAvailable(version);
-                                    if(PowerTunnel.isMainFrameVisible() || PowerTunnel.optionsFrame.isVisible()) {
+                                    if (PowerTunnel.isMainFrameVisible() || PowerTunnel.optionsFrame.isVisible()) {
                                         JEditorPane message = UIUtility.getLabelWithHyperlinkSupport("" + PowerTunnel.NAME + " is ready to update!" +
                                                 "<br><br>" +
                                                 "Version: " + version + "<br>" +

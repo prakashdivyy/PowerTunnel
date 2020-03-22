@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class PowerTunnelMonitor {
 
+    public static final String FAKE_ADDRESS_TEMPLATE = "powertunnelmonitor%s.info";
     private static final String DEFAULT_HTML = "<html>\n" +
             "<head>\n" +
             "    <title>PowerTunnel Monitor</title>\n" +
@@ -109,20 +110,17 @@ public class PowerTunnelMonitor {
             "    </div>\n" +
             "</body>\n" +
             "</html>";
-    private static String HTML = DEFAULT_HTML;
-
-    public static final String FAKE_ADDRESS_TEMPLATE = "powertunnelmonitor%s.info";
-    public static String FAKE_ADDRESS;
-    private static final String[] FORMAT = new String[] {
+    private static final String[] FORMAT = new String[]{
             "http://", "www."
     };
-
     private static final DataStore HTML_STORE = new DataStore("webui", DEFAULT_HTML) {
         @Override
         public String getFileFormat() {
             return "html";
         }
     };
+    public static String FAKE_ADDRESS;
+    private static String HTML = DEFAULT_HTML;
 
     public static void load() throws IOException {
         HTML_STORE.load();
@@ -136,7 +134,7 @@ public class PowerTunnelMonitor {
 
     public static HttpResponse getResponse(String uri) {
         uri = formatUri(uri);
-        if(uri.equals(FAKE_ADDRESS) || uri.equals(FAKE_ADDRESS + "/")) {
+        if (uri.equals(FAKE_ADDRESS) || uri.equals(FAKE_ADDRESS + "/")) {
             StringBuilder blacklist = new StringBuilder();
             for (String s : PowerTunnel.getUserBlacklist()) {
                 blacklist.append("<option>").append(s).append("</option>");
@@ -156,12 +154,12 @@ public class PowerTunnelMonitor {
                     .replace("{whitelist_content}", whitelist.toString()));
         } else {
             String[] uriArray = uri.split("/");
-            if(uriArray.length < 2) {
+            if (uriArray.length < 2) {
                 return HttpUtility.getResponse("Invalid request");
             }
             String query = uriArray[1].toLowerCase();
             String[] queryArray = query.split("-");
-            if(queryArray.length < 2) {
+            if (queryArray.length < 2) {
                 return HttpUtility.getResponse("Invalid query");
             }
             String action = queryArray[0].toLowerCase();
@@ -193,7 +191,7 @@ public class PowerTunnelMonitor {
 
     private static String formatUri(String uri) {
         for (String s : FORMAT) {
-            if(uri.startsWith(s)) {
+            if (uri.startsWith(s)) {
                 uri = uri.replace(s, "");
             }
         }

@@ -27,6 +27,34 @@ public class ProxyFilter extends HttpFiltersAdapter {
     }
 
     /**
+     * DPI circumvention algorithm
+     *
+     * @param request - original HttpRequest
+     */
+    private static void circumventDPI(HttpRequest request) {
+        String host = request.headers().get("Host");
+        if (PowerTunnel.MIX_HOST_CASE) {
+            StringBuilder modified = new StringBuilder();
+            for (int i = 0; i < host.length(); i++) {
+                char c = host.toCharArray()[i];
+                if (i % 2 == 0) {
+                    c = Character.toUpperCase(c);
+                }
+                modified.append(c);
+            }
+            host = modified.toString();
+        }
+        request.headers().remove("Host");
+        if (PowerTunnel.PAYLOAD_LENGTH > 0) {
+            for (int i = 0; i < PowerTunnel.PAYLOAD_LENGTH; i++) {
+                request.headers().add("X-Padding" + i,
+                        new String(new char[1000]).replace("\0", String.valueOf(i % 10)).intern());
+            }
+        }
+        request.headers().add("hOSt", host + ".");
+    }
+
+    /**
      * Filtering client to proxy request:
      * 1) Check if website is in the user whitelist - GOTO 3)
      * 2) Check if website is in the user blacklist - block request
@@ -37,11 +65,11 @@ public class ProxyFilter extends HttpFiltersAdapter {
     public HttpResponse clientToProxyRequest(HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             HttpRequest request = (HttpRequest) httpObject;
-            if(PowerTunnel.isWebUIEnabled() && PowerTunnelMonitor.checkUri(request.getUri())) {
+            if (PowerTunnel.isWebUIEnabled() && PowerTunnelMonitor.checkUri(request.getUri())) {
                 Utility.print("[i] Accepted Web UI connection");
                 return PowerTunnelMonitor.getResponse(request.getUri());
             }
-            if(!request.headers().contains("Host")) {
+            if (!request.headers().contains("Host")) {
                 Utility.print("[i] Invalid packet received: Host header not found");
                 return PowerTunnel.ALLOW_INVALID_HTTP_PACKETS ? null :
                         HttpUtility.getStub("Bad request");
@@ -51,12 +79,12 @@ public class ProxyFilter extends HttpFiltersAdapter {
             PowerTunnel.addToJournal(host);
             Utility.print("[i] %s / %s", request.getMethod(), host);
 
-            if(!PowerTunnel.isUserWhitelisted(host) && PowerTunnel.isUserBlacklisted(host)) {
+            if (!PowerTunnel.isUserWhitelisted(host) && PowerTunnel.isUserBlacklisted(host)) {
                 Utility.print(" [!] Access denied by user: " + host);
                 return HttpUtility.getStub("This website is blocked by user");
             }
 
-            if(PowerTunnel.isBlockedByGovernment(host)) {
+            if (PowerTunnel.isBlockedByGovernment(host)) {
                 circumventDPI(request);
                 Utility.print(" [+] Trying to bypass DPI: " + host);
             }
@@ -69,7 +97,7 @@ public class ProxyFilter extends HttpFiltersAdapter {
     public HttpResponse proxyToServerRequest(HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             HttpRequest request = (HttpRequest) httpObject;
-            if(request.headers().contains("Via")) {
+            if (request.headers().contains("Via")) {
                 request.headers().remove("Via");
             }
         }
@@ -81,40 +109,12 @@ public class ProxyFilter extends HttpFiltersAdapter {
         if (httpObject instanceof DefaultHttpResponse) {
             DefaultHttpResponse response = (DefaultHttpResponse) httpObject;
             //Utility.print("\n\n----------------------------\n" + request.toString() + "\n----------------------------\n\n");
-            if(response.getStatus().code() == 302 && PowerTunnel.isIspStub(response.headers().get("Location"))) {
+            if (response.getStatus().code() == 302 && PowerTunnel.isIspStub(response.headers().get("Location"))) {
                 Utility.print(" [!] Detected ISP 302-redirect to the stub");
                 return HttpUtility.getStub("Thrown out ISP redirect to the stub");
             }
         }
 
         return httpObject;
-    }
-
-    /**
-     * DPI circumvention algorithm
-     *
-     * @param request - original HttpRequest
-     */
-    private static void circumventDPI(HttpRequest request) {
-        String host = request.headers().get("Host");
-        if(PowerTunnel.MIX_HOST_CASE) {
-            StringBuilder modified = new StringBuilder();
-            for(int i = 0; i < host.length(); i++) {
-                char c = host.toCharArray()[i];
-                if(i % 2 == 0) {
-                    c = Character.toUpperCase(c);
-                }
-                modified.append(c);
-            }
-            host = modified.toString();
-        }
-        request.headers().remove("Host");
-        if(PowerTunnel.PAYLOAD_LENGTH > 0) {
-            for (int i = 0; i < PowerTunnel.PAYLOAD_LENGTH; i++) {
-                request.headers().add("X-Padding" + i,
-                        new String(new char[1000]).replace("\0", String.valueOf(i % 10)).intern());
-            }
-        }
-        request.headers().add("hOSt", host + ".");
     }
 }

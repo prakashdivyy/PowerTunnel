@@ -28,7 +28,7 @@ public class JournalFrame extends ControlFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String value = swingList.getSelectedValue();
-                if(value != null) {
+                if (value != null) {
                     PowerTunnel.addToUserWhitelist(value.split(": ")[1]);
                     refill();
                 }
@@ -40,7 +40,7 @@ public class JournalFrame extends ControlFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String value = swingList.getSelectedValue();
-                if(value != null) {
+                if (value != null) {
                     PowerTunnel.addToUserBlacklist(value.split(": ")[1]);
                     refill();
                 }
@@ -80,19 +80,19 @@ public class JournalFrame extends ControlFrame {
         controlFrameInitialized();
     }
 
-    private void refill() {
-        model.removeAllElements();
-        for (String b : getVisited()) {
-            model.addElement(b);
-        }
-    }
-
     public static String[] getVisited() {
         LinkedList<String> list = new LinkedList<>();
         for (Map.Entry<String, String> entry : PowerTunnel.getJournal().entrySet()) {
             list.add(entry.getValue() + entry.getKey());
         }
         return list.toArray(new String[0]);
+    }
+
+    private void refill() {
+        model.removeAllElements();
+        for (String b : getVisited()) {
+            model.addElement(b);
+        }
     }
 
     public void stopRefilling() {

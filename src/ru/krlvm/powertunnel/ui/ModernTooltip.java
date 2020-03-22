@@ -10,7 +10,7 @@ public class ModernTooltip extends JToolTip {
     public ModernTooltip(JComponent component) {
         super();
         setComponent(component);
-        if(!SystemUtility.OLD_OS) {
+        if (!SystemUtility.OLD_OS) {
             setBackground(Color.WHITE);
         }
     }

@@ -20,16 +20,16 @@ public class URLUtility {
      * s -> [medium.com]
      * ==> true
      *
-     * @param host - host
+     * @param host       - host
      * @param collection - list
      * @return true if contains or false if it isn't
      */
     public static boolean checkIsHostContainsInList(String host, Collection<String> collection) {
-        if(collection.contains("*")) {
+        if (collection.contains("*")) {
             return true;
         }
         for (String s : collection) {
-            if(host.endsWith(s) || host.startsWith(s)) {
+            if (host.endsWith(s) || host.startsWith(s)) {
                 return true;
             }
         }
@@ -45,7 +45,7 @@ public class URLUtility {
     public static String clearHost(String host) {
         host = host.replace("https://", "").replace("http://", "").replace("www.", "")
                 .replace(":443", "");
-        if(host.contains("/")) {
+        if (host.contains("/")) {
             host = host.substring(0, host.indexOf("/"));
         }
         return host;
@@ -56,7 +56,6 @@ public class URLUtility {
      *
      * @param address - URL address
      * @return - content
-     *
      * @throws IOException - read/connect failure
      */
     public static String load(String address) throws IOException {

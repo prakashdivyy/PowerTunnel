@@ -6,7 +6,10 @@ import ru.krlvm.swingdpi.SwingDPI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class MainFrame extends ControlFrame {
 
@@ -23,28 +26,28 @@ public class MainFrame extends ControlFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(8,0,0,0);
+        gbc.insets = new Insets(8, 0, 0, 0);
 
         header = new JLabel(getHeaderText());
 
         final JTextField ipInput = new JTextField();
         Insets insets = ipInput.getInsets();
-        ipInput.setPreferredSize(new Dimension(SwingDPI.scale(200)+insets.left+insets.right,
-                SwingDPI.scale(22)+insets.top+insets.bottom));
+        ipInput.setPreferredSize(new Dimension(SwingDPI.scale(200) + insets.left + insets.right,
+                SwingDPI.scale(22) + insets.top + insets.bottom));
         ipInput.setToolTipText("IP Address");
         ipInput.setText(String.valueOf(PowerTunnel.SERVER_IP_ADDRESS));
 
         final JTextField portInput = new JTextField();
         insets = portInput.getInsets();
-        portInput.setPreferredSize(SwingDPI.scale(76+insets.left+insets.right,
-                22+insets.top+insets.bottom));
+        portInput.setPreferredSize(SwingDPI.scale(76 + insets.left + insets.right,
+                22 + insets.top + insets.bottom));
         portInput.setToolTipText("Port");
         portInput.setText(String.valueOf(PowerTunnel.SERVER_PORT));
 
         inputs = new JTextField[]{ipInput, portInput};
 
         stateButton = new JButton("Start server");
-        stateButton.setPreferredSize(new Dimension((int)stateButton.getPreferredSize().getWidth(), (int)portInput.getPreferredSize().getHeight()));
+        stateButton.setPreferredSize(new Dimension((int) stateButton.getPreferredSize().getWidth(), (int) portInput.getPreferredSize().getHeight()));
         stateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -144,7 +147,7 @@ public class MainFrame extends ControlFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if(PowerTunnel.getStatus() != ServerStatus.NOT_RUNNING && PowerTunnel.getTray().isLoaded()) {
+                if (PowerTunnel.getStatus() != ServerStatus.NOT_RUNNING && PowerTunnel.getTray().isLoaded()) {
                     PowerTunnel.getTray().showNotification(PowerTunnel.NAME + " is still working in tray mode");
                     return;
                 }

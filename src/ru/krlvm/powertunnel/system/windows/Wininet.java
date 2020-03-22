@@ -1,13 +1,13 @@
 package ru.krlvm.powertunnel.system.windows;
 
 import com.sun.jna.Native;
-import com.sun.jna.win32.W32APIOptions; 
 import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
- 
+import com.sun.jna.win32.W32APIOptions;
+
 public interface Wininet extends StdCallLibrary {
 
-    Wininet INSTANCE = (Wininet)Native.loadLibrary("Wininet", Wininet.class,
+    Wininet INSTANCE = Native.loadLibrary("Wininet", Wininet.class,
             W32APIOptions.DEFAULT_OPTIONS);
 
     int INTERNET_OPTION_SETTINGS_CHANGED = 39;

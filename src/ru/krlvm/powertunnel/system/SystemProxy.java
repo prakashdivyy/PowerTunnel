@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Configures system's proxy settings
  * Only Windows is supported now
- *
+ * <p>
  * TODO: Other systems support
  */
 public class SystemProxy {

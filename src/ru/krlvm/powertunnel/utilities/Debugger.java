@@ -10,25 +10,6 @@ public class Debugger {
     private static boolean DEBUG_ENABLED = false;
 
     /**
-     * Enable or disable debug
-     *
-     * @param debug - true/false
-     */
-    public static void setDebug(boolean debug) {
-        if(Debugger.DEBUG_ENABLED == debug) {
-            return;
-        }
-        String state;
-        if(!debug) {
-            state = "disabled";
-        } else {
-            state = "enabled";
-        }
-        Utility.print("[Debug] Debug %s", state);
-        Debugger.DEBUG_ENABLED = debug;
-    }
-
-    /**
      * Retrieve is debug enabled
      *
      * @return true if debug enabled or false if it isn't
@@ -38,13 +19,32 @@ public class Debugger {
     }
 
     /**
+     * Enable or disable debug
+     *
+     * @param debug - true/false
+     */
+    public static void setDebug(boolean debug) {
+        if (Debugger.DEBUG_ENABLED == debug) {
+            return;
+        }
+        String state;
+        if (!debug) {
+            state = "disabled";
+        } else {
+            state = "enabled";
+        }
+        Utility.print("[Debug] Debug %s", state);
+        Debugger.DEBUG_ENABLED = debug;
+    }
+
+    /**
      * Debug message
      *
      * @param message - message
-     * @param args - arguments for formatting
+     * @param args    - arguments for formatting
      */
     public static void debug(String message, Object... args) {
-        if(DEBUG_ENABLED) {
+        if (DEBUG_ENABLED) {
             Utility.print("[Debug] " + message, args);
         }
     }
@@ -55,7 +55,7 @@ public class Debugger {
      * @param ex - exception
      */
     public static void debug(Exception ex) {
-        if(DEBUG_ENABLED) {
+        if (DEBUG_ENABLED) {
             ex.printStackTrace();
         }
     }

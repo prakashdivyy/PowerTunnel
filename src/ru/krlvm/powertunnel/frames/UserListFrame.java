@@ -24,7 +24,7 @@ public abstract class UserListFrame extends ControlFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String value = swingList.getSelectedValue();
-                if(value != null) {
+                if (value != null) {
                     userActed(swingList.getSelectedValue());
                 }
             }
@@ -51,6 +51,8 @@ public abstract class UserListFrame extends ControlFrame {
     public final String type() {
         return type;
     }
+
     protected abstract void userActed(String address);
+
     protected abstract String[] getElements();
 }

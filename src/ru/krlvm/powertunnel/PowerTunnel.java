@@ -22,7 +22,6 @@ import ru.krlvm.powertunnel.webui.PowerTunnelMonitor;
 import ru.krlvm.swingdpi.SwingDPI;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +35,7 @@ import java.util.*;
 
 /**
  * PowerTunnel Bootstrap class
- *
+ * <p>
  * This class initializes PowerTunnel, loads government blacklist,
  * user lists, holds journal and controls the LittleProxy Server
  *
@@ -48,51 +47,49 @@ public class PowerTunnel {
     public static final String VERSION = "1.9.2.1";
     public static final int VERSION_CODE = 21;
     public static final String REPOSITORY_URL = "https://github.com/krlvm/PowerTunnel";
-
-    private static HttpProxyServer SERVER;
-    private static ServerStatus STATUS = ServerStatus.NOT_RUNNING;
+    public static final Settings SETTINGS = new Settings();
+    private static final Map<String, String> JOURNAL = new LinkedHashMap<>();
+    private static final SimpleDateFormat JOURNAL_DATE_FORMAT = new SimpleDateFormat("[HH:mm]: ");
+    private static final Set<String> GOVERNMENT_BLACKLIST = new HashSet<>();
+    private static final Set<String> ISP_STUB_LIST = new HashSet<>();
+    private static final Set<String> USER_BLACKLIST = new LinkedHashSet<>();
+    private static final Set<String> USER_WHITELIST = new LinkedHashSet<>();
     public static String SERVER_IP_ADDRESS = "127.0.0.1";
     public static int SERVER_PORT = 8085;
-    private static boolean AUTO_PROXY_SETUP_ENABLED = true;
-
-    public static final Settings SETTINGS = new Settings();
-    /** Optional settings */
+    /**
+     * Optional settings
+     */
     public static boolean ALLOW_INVALID_HTTP_PACKETS = true;
     public static boolean FULL_CHUNKING = false;
     public static int CHUNK_SIZE = 2;
     public static int PAYLOAD_LENGTH = 0; //21 recommended
     public static boolean USE_DNS_SEC = false;
     public static boolean MIX_HOST_CASE = false;
-    private static String GOVERNMENT_BLACKLIST_MIRROR = null;
-    /** ----------------- */
+    /**
+     * -----------------
+     */
 
     public static boolean FULL_OUTPUT_MIRRORING = false;
-
-    private static final Map<String, String> JOURNAL = new LinkedHashMap<>();
-    private static final SimpleDateFormat JOURNAL_DATE_FORMAT = new SimpleDateFormat("[HH:mm]: ");
     public static boolean DISABLE_JOURNAL = false;
-
-    private static final Set<String> GOVERNMENT_BLACKLIST = new HashSet<>();
-    private static final Set<String> ISP_STUB_LIST = new HashSet<>();
-    private static final Set<String> USER_BLACKLIST = new LinkedHashSet<>();
-    private static final Set<String> USER_WHITELIST = new LinkedHashSet<>();
-
-    private static TrayManager trayManager;
-    private static MainFrame frame;
     public static LogFrame logFrame;
     public static JournalFrame journalFrame;
     public static OptionsFrame optionsFrame;
     public static UserListFrame[] USER_FRAMES;
-    
+    private static HttpProxyServer SERVER;
+    private static ServerStatus STATUS = ServerStatus.NOT_RUNNING;
+    private static boolean AUTO_PROXY_SETUP_ENABLED = true;
+    private static String GOVERNMENT_BLACKLIST_MIRROR = null;
+    private static TrayManager trayManager;
+    private static MainFrame frame;
     private static boolean CONSOLE_MODE = false;
 
     public static void main(String[] args) {
         //Parse launch arguments
         //java -jar PowerTunnel.jar (-args)
         boolean startNow = false;
-        boolean[] uiSettings = { true, true, true };
+        boolean[] uiSettings = {true, true, true};
         float scaleFactor = -1F;
-        if(args.length > 0) {
+        if (args.length > 0) {
             for (int i = 0; i < args.length; i++) {
                 String arg = args[i];
                 if (!arg.startsWith("-")) {
@@ -270,9 +267,9 @@ public class PowerTunnel {
             Utility.print("[!] Failed to load settings: " + ex.getMessage());
             Debugger.debug(ex);
         }
-        if(!CONSOLE_MODE) {
+        if (!CONSOLE_MODE) {
             //Initialize UI
-            if(uiSettings[1]) {
+            if (uiSettings[1]) {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (Exception ex) {
@@ -281,8 +278,8 @@ public class PowerTunnel {
                     System.out.println();
                 }
             }
-            if(uiSettings[0]) {
-                if(scaleFactor != -1) {
+            if (uiSettings[0]) {
+                if (scaleFactor != -1) {
                     SwingDPI.setScaleFactor(scaleFactor);
                 } else {
                     SwingDPI.applyScalingAutomatically();
@@ -291,7 +288,7 @@ public class PowerTunnel {
             }
 
             trayManager = new TrayManager();
-            if(uiSettings[2]) {
+            if (uiSettings[2]) {
                 try {
                     trayManager.load();
                 } catch (Exception ex) {
@@ -314,7 +311,7 @@ public class PowerTunnel {
             frame = new MainFrame();
 
             //Initialize UI
-            USER_FRAMES = new UserListFrame[] {
+            USER_FRAMES = new UserListFrame[]{
                     new BlacklistFrame(), new WhitelistFrame()
             };
         }
@@ -328,7 +325,7 @@ public class PowerTunnel {
         //Allow us to modify 'HOST' request header
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
-        if(isWebUIEnabled()) {
+        if (isWebUIEnabled()) {
             try {
                 PowerTunnelMonitor.load();
                 Utility.print("[x] WebUI is available at http://%s", PowerTunnelMonitor.FAKE_ADDRESS);
@@ -338,7 +335,7 @@ public class PowerTunnel {
                 PowerTunnelMonitor.FAKE_ADDRESS = null;
             }
         }
-        if(CONSOLE_MODE || startNow) {
+        if (CONSOLE_MODE || startNow) {
             safeBootstrap();
         }
 
@@ -359,7 +356,7 @@ public class PowerTunnel {
             ex.printStackTrace();
             error = "Failed to load data store: " + ex.getMessage();
         }
-        if(error != null) {
+        if (error != null) {
             setStatus(ServerStatus.NOT_RUNNING);
         }
         return error;
@@ -375,7 +372,7 @@ public class PowerTunnel {
             for (String address : DataStore.GOVERNMENT_BLACKLIST.load()) {
                 addToGovernmentBlacklist(address);
             }
-            if(GOVERNMENT_BLACKLIST_MIRROR != null && !GOVERNMENT_BLACKLIST_MIRROR.trim().isEmpty()) {
+            if (GOVERNMENT_BLACKLIST_MIRROR != null && !GOVERNMENT_BLACKLIST_MIRROR.trim().isEmpty()) {
                 Utility.print("[#] Loading government blacklist from the mirror...");
                 try {
                     URL url = new URL(GOVERNMENT_BLACKLIST_MIRROR);
@@ -396,13 +393,13 @@ public class PowerTunnel {
             for (String address : DataStore.USER_BLACKLIST.load()) {
                 addToUserBlacklist(address);
             }
-            if(!CONSOLE_MODE) {
+            if (!CONSOLE_MODE) {
                 USER_FRAMES[0].refill();
             }
             for (String address : DataStore.USER_WHITELIST.load()) {
                 addToUserWhitelist(address);
             }
-            if(!CONSOLE_MODE) {
+            if (!CONSOLE_MODE) {
                 USER_FRAMES[1].refill();
             }
             ISP_STUB_LIST.addAll(DataStore.ISP_STUB_LIST.load());
@@ -436,11 +433,11 @@ public class PowerTunnel {
         Utility.print("[.] Server started");
         Utility.print();
 
-        if(AUTO_PROXY_SETUP_ENABLED) {
+        if (AUTO_PROXY_SETUP_ENABLED) {
             SystemProxy.enableProxy();
         }
 
-        if(!CONSOLE_MODE) {
+        if (!CONSOLE_MODE) {
             frame.update();
         }
     }
@@ -457,7 +454,7 @@ public class PowerTunnel {
         Utility.print();
         setStatus(ServerStatus.NOT_RUNNING);
 
-        if(AUTO_PROXY_SETUP_ENABLED) {
+        if (AUTO_PROXY_SETUP_ENABLED) {
             SystemProxy.disableProxy();
         }
     }
@@ -494,13 +491,6 @@ public class PowerTunnel {
 
     public static boolean isMainFrameVisible() {
         return frame.isVisible();
-    }
-
-    public static void setStatus(ServerStatus status) {
-        STATUS = status;
-        if(!CONSOLE_MODE) {
-            frame.update();
-        }
     }
 
     public static void loadSettings() {
@@ -547,6 +537,13 @@ public class PowerTunnel {
         return STATUS;
     }
 
+    public static void setStatus(ServerStatus status) {
+        STATUS = status;
+        if (!CONSOLE_MODE) {
+            frame.update();
+        }
+    }
+
     /**
      * Retrieves is console mode disabled (therefore is the UI enabled)
      *
@@ -566,7 +563,7 @@ public class PowerTunnel {
      * @param address - website address
      */
     public static void addToJournal(String address) {
-        if(!DISABLE_JOURNAL) {
+        if (!DISABLE_JOURNAL) {
             return;
         }
         JOURNAL.put(address, JOURNAL_DATE_FORMAT.format(new Date()));
@@ -601,7 +598,7 @@ public class PowerTunnel {
      */
     public static boolean addToGovernmentBlacklist(String address) {
         address = URLUtility.clearHost(address.toLowerCase());
-        if(GOVERNMENT_BLACKLIST.contains(address)) {
+        if (GOVERNMENT_BLACKLIST.contains(address)) {
             return false;
         }
         GOVERNMENT_BLACKLIST.add(address);
@@ -625,7 +622,7 @@ public class PowerTunnel {
      */
     public static boolean isIspStub(String address) {
         String host;
-        if(address.contains("/")) {
+        if (address.contains("/")) {
             host = address.substring(0, address.indexOf("/"));
         } else {
             host = address;
@@ -665,7 +662,7 @@ public class PowerTunnel {
      * Refills user list frames
      */
     public static void updateUserListFrames() {
-        if(CONSOLE_MODE) {
+        if (CONSOLE_MODE) {
             return;
         }
         for (UserListFrame frame : USER_FRAMES) {
@@ -686,7 +683,7 @@ public class PowerTunnel {
      */
     public static boolean addToUserBlacklist(String address) {
         address = URLUtility.clearHost(address.toLowerCase());
-        if(USER_BLACKLIST.contains(address)) {
+        if (USER_BLACKLIST.contains(address)) {
             return false;
         }
         USER_WHITELIST.remove(address);
@@ -715,7 +712,7 @@ public class PowerTunnel {
      */
     public static boolean removeFromUserBlacklist(String address) {
         address = URLUtility.clearHost(address.toLowerCase());
-        if(!USER_BLACKLIST.contains(address)) {
+        if (!USER_BLACKLIST.contains(address)) {
             return false;
         }
         USER_BLACKLIST.remove(address);
@@ -746,7 +743,7 @@ public class PowerTunnel {
      */
     public static boolean addToUserWhitelist(String address) {
         address = URLUtility.clearHost(address.toLowerCase());
-        if(USER_WHITELIST.contains(address)) {
+        if (USER_WHITELIST.contains(address)) {
             return false;
         }
         USER_BLACKLIST.remove(address);
@@ -775,7 +772,7 @@ public class PowerTunnel {
      */
     public static boolean removeFromUserWhitelist(String address) {
         address = URLUtility.clearHost(address.toLowerCase());
-        if(!USER_WHITELIST.contains(address)) {
+        if (!USER_WHITELIST.contains(address)) {
             return false;
         }
         USER_WHITELIST.remove(address);

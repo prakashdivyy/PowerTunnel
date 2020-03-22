@@ -14,11 +14,11 @@ public class Utility {
     /**
      * Simple print assistant, that printing dually
      * to System.out and MainFrame
-     *
+     * <p>
      * With String.format automatically
      *
      * @param message - message to print
-     * @param args - arguments to format
+     * @param args    - arguments to format
      */
     public static void print(String message, Object... args) {
         print(String.format(message, args));
@@ -31,12 +31,12 @@ public class Utility {
      * @param message - message to print
      */
     public static void print(String message) {
-        if(message == null) {
+        if (message == null) {
             print();
             return;
         }
         System.out.println(message);
-        if(PowerTunnel.isUIEnabled() && !PowerTunnel.FULL_OUTPUT_MIRRORING) {
+        if (PowerTunnel.isUIEnabled() && !PowerTunnel.FULL_OUTPUT_MIRRORING) {
             LogFrame.print(message);
         }
     }
